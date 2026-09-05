@@ -79,7 +79,12 @@
     resize: none;
 }
 
-.form__input--name,
+.form__input--name {
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
 .form__input--date {
     border: none;
     outline: none;

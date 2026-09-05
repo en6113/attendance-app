@@ -20,7 +20,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                $redirectTo = Auth::guard($guard)->user()->admin_status
+                $redirectTo = $request->is('admin/login')
                     ? '/admin/attendance/list'
                     : '/attendance';
 

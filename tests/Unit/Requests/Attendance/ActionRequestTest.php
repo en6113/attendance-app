@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Requests;
 
-use App\Http\Requests\Attendance\AttendanceActionRequest;
+use App\Http\Requests\Attendance\ActionRequest;
 use App\Models\AttendanceRecord;
 use App\Models\BreakTime;
 use App\Models\User;
@@ -11,13 +11,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
-class AttendanceActionRequestTest extends TestCase
+class ActionRequestTest extends TestCase
 {
     use RefreshDatabase;
 
     private function validate(User $user, string $action): ValidatorContract
     {
-        $request = AttendanceActionRequest::create('/attendance', 'POST', ['action' => $action]);
+        $request = ActionRequest::create('/attendance', 'POST', ['action' => $action]);
         $request->setUserResolver(fn () => $user);
 
         return Validator::make($request->all(), $request->rules());

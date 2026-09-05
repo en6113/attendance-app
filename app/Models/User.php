@@ -51,6 +51,7 @@ class User extends Authenticatable
         return $this->hasMany(AttendanceRecord::class);
     }
 
+    // 出退勤時刻または休憩時刻の有無によって勤務状態のステータスを判断するアクセサ
     protected function attendanceStatus(): Attribute
     {
         return Attribute::make(
