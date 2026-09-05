@@ -19,6 +19,7 @@ class AttendanceRecord extends Model
         'work_date',
         'clock_in_time',
         'clock_out_time',
+        'comment',
     ];
 
     /**
@@ -38,5 +39,10 @@ class AttendanceRecord extends Model
     public function breaks(): HasMany
     {
         return $this->hasMany(BreakTime::class);
+    }
+
+    public function correctRequests(): HasMany
+    {
+        return $this->hasMany(AttendanceCorrectRequest::class);
     }
 }

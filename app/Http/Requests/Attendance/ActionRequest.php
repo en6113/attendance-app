@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * 勤怠打刻（出勤・休憩入・休憩戻・退勤）のPOSTリクエストを検証するrequest。
  * 現在のattendance_statusと矛盾するactionが送られた場合、エラーメッセージを返す。
  */
-class AttendanceActionRequest extends FormRequest
+class ActionRequest extends FormRequest
 {
     public function authorize(): bool
     {

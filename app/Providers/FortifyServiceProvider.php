@@ -62,9 +62,11 @@ class FortifyServiceProvider extends ServiceProvider
                 return null;
             }
 
-            return $user->admin_status === $request->is('admin/login')
-                ? $user
-                : null;
+            if ($request->is('admin/login') && ! $user->admin_status) {
+                return null;
+            }
+
+            return $user;
         });
 
         RateLimiter::for('login', function (Request $request) {

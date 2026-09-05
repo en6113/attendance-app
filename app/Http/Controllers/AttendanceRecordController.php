@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Attendance\AttendanceActionRequest;
+use App\Http\Requests\Attendance\ActionRequest;
 use App\Models\AttendanceRecord;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -18,7 +18,7 @@ class AttendanceRecordController extends Controller
         ]);
     }
 
-    public function store(AttendanceActionRequest $request): RedirectResponse
+    public function store(ActionRequest $request): RedirectResponse
     {
         match ($request->action) {
             'clock_in' => $this->clockIn(),

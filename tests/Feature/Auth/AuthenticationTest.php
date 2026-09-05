@@ -113,21 +113,4 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/login');
         $this->assertGuest();
     }
-
-    public function test_管理者が一般ログインを利用すると弾かれる(): void
-    {
-        User::factory()->create([
-            'email' => 'user3@example.com',
-            'password' => 'password',
-            'admin_status' => true,
-        ]);
-
-        $response = $this->post('/login', [
-            'email' => 'user3@example.com',
-            'password' => 'password',
-        ]);
-
-        $response->assertSessionHasErrors(['email' => 'ログイン情報が登録されていません']);
-        $this->assertGuest();
-    }
 }

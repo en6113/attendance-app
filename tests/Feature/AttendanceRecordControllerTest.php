@@ -87,6 +87,18 @@ class AttendanceRecordControllerTest extends TestCase
         $response->assertDontSee('出勤');
     }
 
+    public function test_出勤時刻が勤怠一覧画面で確認できる(): void
+    {
+        $this->travelTo(today()->setTime(9, 0));
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->post('/attendance', ['action' => 'clock_in']);
+
+        $response = $this->actingAs($user)->get('/attendance/list');
+
+        $response->assertSee('09:00');
+    }
+
     public function test_休憩入ボタンが正しく機能する(): void
     {
         $user = User::factory()->create();
@@ -141,6 +153,23 @@ class AttendanceRecordControllerTest extends TestCase
         $response->assertSee('休憩戻');
     }
 
+    public function test_休憩時間合計が勤怠一覧画面で確認できる(): void
+    {
+        $this->travelTo(today()->setTime(9, 0));
+        $user = User::factory()->create();
+        $this->actingAs($user)->post('/attendance', ['action' => 'clock_in']);
+
+        $this->travelTo(today()->setTime(12, 0));
+        $this->actingAs($user)->post('/attendance', ['action' => 'break_in']);
+
+        $this->travelTo(today()->setTime(13, 0));
+        $this->actingAs($user)->post('/attendance', ['action' => 'break_out']);
+
+        $response = $this->actingAs($user)->get('/attendance/list');
+
+        $response->assertSee('1:00');
+    }
+
     public function test_退勤ボタンが正しく機能する(): void
     {
         $user = User::factory()->create();
@@ -152,6 +181,20 @@ class AttendanceRecordControllerTest extends TestCase
         $this->actingAs($user)->post('/attendance', ['action' => 'clock_out']);
 
         $this->assertSame('退勤済', $user->fresh()->attendance_status);
+    }
+
+    public function test_退勤時刻が勤怠一覧画面で確認できる(): void
+    {
+        $this->travelTo(today()->setTime(9, 0));
+        $user = User::factory()->create();
+        $this->actingAs($user)->post('/attendance', ['action' => 'clock_in']);
+
+        $this->travelTo(today()->setTime(18, 0));
+        $this->actingAs($user)->post('/attendance', ['action' => 'clock_out']);
+
+        $response = $this->actingAs($user)->get('/attendance/list');
+
+        $response->assertSee('18:00');
     }
 
     public function test_現在のステータスと矛盾するactionを送るとエラーになる(): void
