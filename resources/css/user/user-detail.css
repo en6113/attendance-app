@@ -77,6 +77,8 @@
     height: 50px;
     padding: 5px;
     resize: none;
+    font-family: inherit;
+    overflow-y: auto;
 }
 
 .form__input--name {
@@ -171,6 +173,8 @@
     height: 50px;
     padding: 5px;
     resize: none;
+    font-family: inherit;
+    overflow-y: auto;
 }
 
 .applied-form__text {
