@@ -33,6 +33,9 @@
         </div>
     </header>
     <main>
+        @if (session('message'))
+            <p class="flash-message">{{ session('message') }}</p>
+        @endif
         @yield('content')
     </main>
 </body>

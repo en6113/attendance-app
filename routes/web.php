@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAttendanceController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceRecordController;
@@ -31,7 +32,9 @@ Route::middleware('auth:web')->group(function () {
 // ============================================================
 // 管理者専用ルート
 // ============================================================
-Route::middleware('auth:web')->group(function () {
-    // 仮ルート:管理者勤怠一覧機能の本実装までの動作確認用
-    Route::get('/admin/attendance/list', fn () => view('admin.temp-attendance-list'));
+Route::middleware('auth:web', 'admin')->group(function () {
+    // 日次勤怠一覧
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);
+    Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update']);
 });
