@@ -48,7 +48,7 @@
                     <td class="table__description">
                         <p class="table__description--item">{{ $application['date'] }}</p>
                     </td>
-                    <td class="table__description">
+                    <td class="table__description table__description--comment">
                         <p class="table__description--item">{{ $application['comment'] ?? 'なし' }}</p>
                     </td>
                     <td class="table__description">
@@ -96,7 +96,7 @@
                     <td class="table__description">
                         <p class="table__description--item">{{ $application['date'] }}</p>
                     </td>
-                    <td class="table__description">
+                    <td class="table__description table__description--comment">
                         <p class="table__description--item">{{ $application['comment'] ?? 'なし' }}</p>
                     </td>
                     <td class="table__description">

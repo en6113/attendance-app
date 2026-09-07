@@ -88,7 +88,7 @@
                     <div class="form__group">
                         <label class="form__header" for="comment">備考</label>
                         <div class="form__input-group">
-                            <input class="form__textarea" id="comment" name="comment" value="{{ $data['comment'] }}">
+                            <textarea class="form__textarea" id="comment" name="comment">{{ $data['comment'] }}</textarea>
                         </div>
                     </div>
 
@@ -149,8 +149,7 @@
                     <div class="form__group">
                         <label class="form__header">備考</label>
                         <div class="form__input-group">
-                            <input class="form__textarea readonly" name="comment" value="{{ $data['comment'] }}"
-                                readonly></input>
+                            <textarea class="form__textarea readonly" name="comment" readonly>{{ $data['comment'] }}</textarea>
                         </div>
                     </div>
                 </div>

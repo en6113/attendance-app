@@ -52,6 +52,12 @@
     margin-bottom: 10px;
 }
 
+.table__description--comment {
+    max-width: 220px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 .table__item--detail-link {
     color: #000;
     font-weight: bold;
