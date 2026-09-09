@@ -44,7 +44,7 @@ class FormatAttendanceRecordsAction
 
         return [
             'date' => $day->isoFormat('MM/DD(ddd)'),
-            'clock_in' => $record->clock_in_,
+            'clock_in' => $record->clock_in,
             'clock_out' => $record->clock_out,
             'total_break_time' => $record->total_break_time,
             'total_time' => $record->total_time,

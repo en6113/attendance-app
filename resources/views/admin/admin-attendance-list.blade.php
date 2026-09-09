@@ -37,7 +37,7 @@
         </tr>
         @foreach ($users as $user)
         @php
-            $attendance = $attendanceRecords->where('user_id', $user->id)->first();
+            $attendance = $attendanceRecords->get($user->id);
         @endphp
         @if ($attendance)
         <tr class="table__row">

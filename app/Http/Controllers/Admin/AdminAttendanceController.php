@@ -23,8 +23,12 @@ class AdminAttendanceController extends Controller
      */
     public function index(): View
     {
-        $date = request('date')
-            ? CarbonImmutable::createFromFormat('Y-m-d', request('date'))
+        $validated = request()->validate([
+            'date' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+
+        $date = $validated['date'] ?? null
+            ? CarbonImmutable::createFromFormat('Y-m-d', $validated['date'])
             : today()->toImmutable();
 
         return view('admin.admin-attendance-list', [
@@ -32,7 +36,7 @@ class AdminAttendanceController extends Controller
             'previousDay' => $date->subDay()->toDateString(),
             'nextDay' => $date->addDay()->toDateString(),
             'users' => User::all(),
-            'attendanceRecords' => AttendanceRecord::whereDate('work_date', $date)->with('breaks')->get(),
+            'attendanceRecords' => AttendanceRecord::whereDate('work_date', $date)->with('breaks')->get()->keyBy('user_id'),
         ]);
     }
 
@@ -72,6 +76,10 @@ class AdminAttendanceController extends Controller
      */
     public function update(StoreRequest $request, AttendanceRecord $id): RedirectResponse
     {
+        if ($id->correctRequests()->whereNull('approved_at')->exists()) {
+            return redirect('/attendance/detail/' . $id->id);
+        }
+
         $id->update([
             'clock_in_time' => $id->work_date->format('Y-m-d').' '.$request->new_clock_in,
             'clock_out_time' => $id->work_date->format('Y-m-d').' '.$request->new_clock_out,

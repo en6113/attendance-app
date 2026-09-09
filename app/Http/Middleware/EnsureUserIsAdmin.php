@@ -11,7 +11,7 @@ class EnsureUserIsAdmin
     /**
      * 管理者ルート用のmiddleware
      *
-     * 使用例: Route::middleware(['auth', 'role:admin'])->group(...)
+     * 使用例: Route::middleware(['auth:web', 'admin'])->group(...)
      */
     public function handle(Request $request, Closure $next): Response
     {
