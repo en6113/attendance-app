@@ -39,3 +39,30 @@
 main{
     min-height: 100vh;
 }
+
+.flash-message {
+    position: fixed;
+    top: 60px;
+    right: 60px;
+    z-index: 1000;
+    background: #F5F5F5;
+    color: #000;
+    font-size: 14px;
+    padding: 14px 24px;
+    border-radius: 8px;
+    border: 1px solid #E1E1E1;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    animation: flash-message-in 0.3s ease-out;
+}
+
+@keyframes flash-message-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

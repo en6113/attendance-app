@@ -37,7 +37,7 @@
         </tr>
         @foreach ($users as $user)
         @php
-            $attendance = $attendanceRecords->where('user_id', $user->id)->first();
+            $attendance = $attendanceRecords->get($user->id);
         @endphp
         @if ($attendance)
         <tr class="table__row">
@@ -57,7 +57,7 @@
                 <p class="table__description--item">{{ $attendance->total_time ? Carbon\Carbon::parse($attendance->total_time)->format('G:i') : '' }}</p>
             </td>
             <td class="table__description">
-                <a class="table__item--detail-link" href="{{ url('/attendance/' . $attendance['id']) }}">詳細</a>
+                <a class="table__item--detail-link" href="{{ url('/admin/attendance/' . $attendance['id']) }}">詳細</a>
             </td>
         </tr>
         @endif
