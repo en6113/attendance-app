@@ -17,7 +17,7 @@ class AttendanceControllerTest extends TestCase
     {
         $user = User::factory()->create();
         AttendanceRecord::factory()->for($user)->create([
-            'work_date' => '2026-09-05',
+            'date' => '2026-09-05',
             'clock_in_time' => '2026-09-05 09:00:00',
             'clock_out_time' => '2026-09-05 18:00:00',
         ]);
@@ -43,7 +43,7 @@ class AttendanceControllerTest extends TestCase
     {
         $user = User::factory()->create();
         AttendanceRecord::factory()->for($user)->create([
-            'work_date' => '2026-08-10',
+            'date' => '2026-08-10',
             'clock_in_time' => '2026-08-10 09:00:00',
         ]);
 
@@ -70,7 +70,7 @@ class AttendanceControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $record = AttendanceRecord::factory()->for($user)->create([
-            'work_date' => '2026-09-05',
+            'date' => '2026-09-05',
         ]);
 
         $response = $this->actingAs($user)->get('/attendance/list?date=2026-09');
@@ -82,7 +82,7 @@ class AttendanceControllerTest extends TestCase
     {
         $user = User::factory()->create(['name' => '山田太郎']);
         $record = AttendanceRecord::factory()->for($user)->create([
-            'work_date' => '2026-09-05',
+            'date' => '2026-09-05',
             'clock_in_time' => '2026-09-05 09:00:00',
             'clock_out_time' => '2026-09-05 18:00:00',
         ]);
@@ -127,7 +127,7 @@ class AttendanceControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $record = AttendanceRecord::factory()->for($user)->create([
-            'work_date' => '2026-09-05',
+            'date' => '2026-09-05',
             'clock_in_time' => '2026-09-05 09:00:00',
             'clock_out_time' => '2026-09-05 18:00:00',
         ]);

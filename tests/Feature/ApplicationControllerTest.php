@@ -15,8 +15,8 @@ class ApplicationControllerTest extends TestCase
     public function test_承認待ちにログインユーザーが行った申請が全て表示されている(): void
     {
         $user = User::factory()->create();
-        $recordA = AttendanceRecord::factory()->for($user)->create(['work_date' => '2026-09-01']);
-        $recordB = AttendanceRecord::factory()->for($user)->create(['work_date' => '2026-09-02']);
+        $recordA = AttendanceRecord::factory()->for($user)->create(['date' => '2026-09-01']);
+        $recordB = AttendanceRecord::factory()->for($user)->create(['date' => '2026-09-02']);
         AttendanceCorrectRequest::factory()->for($recordA)->create(['comment' => '電車遅延のため']);
         AttendanceCorrectRequest::factory()->for($recordB)->create(['comment' => '体調不良のため']);
 

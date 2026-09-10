@@ -46,10 +46,11 @@ class AttendanceController extends Controller
     public function store(StoreRequest $request, AttendanceRecord $id): RedirectResponse
     {
         $correctRequest = $id->correctRequests()->create([
-            'new_date' => $id->work_date,
+            'new_date' => $id->date,
             'new_clock_in' => $request->new_clock_in,
             'new_clock_out' => $request->new_clock_out,
             'comment' => $request->comment,
+            'application_date' => today(),
         ]);
 
         collect($request->new_break_in ?? [])

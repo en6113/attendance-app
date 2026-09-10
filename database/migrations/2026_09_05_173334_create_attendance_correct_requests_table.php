@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('new_clock_out');
             $table->string('comment', 255);
             $table->timestamp('approved_at')->nullable();
+            $table->date('application_date');
             $table->timestamps();
         });
     }

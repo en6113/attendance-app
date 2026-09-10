@@ -21,6 +21,7 @@ class AttendanceCorrectRequest extends Model
         'new_clock_in',
         'new_clock_out',
         'comment',
+        'application_date',
     ];
 
     /**
@@ -29,6 +30,7 @@ class AttendanceCorrectRequest extends Model
     protected $casts = [
         'new_date' => 'date',
         'approved_at' => 'datetime',
+        'application_date' => 'date',
     ];
 
     public function attendanceRecord(): BelongsTo

@@ -44,7 +44,7 @@ class StaffControllerTest extends TestCase
         $admin = User::factory()->create(['admin_status' => true]);
         $staff = User::factory()->create(['name' => '山田太郎']);
         AttendanceRecord::factory()->for($staff)->create([
-            'work_date' => '2026-09-05',
+            'date' => '2026-09-05',
             'clock_in_time' => '2026-09-05 09:00:00',
             'clock_out_time' => '2026-09-05 18:00:00',
         ]);
@@ -62,7 +62,7 @@ class StaffControllerTest extends TestCase
         $admin = User::factory()->create(['admin_status' => true]);
         $staff = User::factory()->create();
         AttendanceRecord::factory()->for($staff)->create([
-            'work_date' => '2026-08-10',
+            'date' => '2026-08-10',
             'clock_in_time' => '2026-08-10 09:00:00',
         ]);
 
@@ -98,7 +98,7 @@ class StaffControllerTest extends TestCase
         $admin = User::factory()->create(['admin_status' => true]);
         $staff = User::factory()->create();
         $record = AttendanceRecord::factory()->for($staff)->create([
-            'work_date' => '2026-09-05',
+            'date' => '2026-09-05',
         ]);
 
         $response = $this->actingAs($admin)->get('/admin/attendance/staff/'.$staff->id.'?date=2026-09');

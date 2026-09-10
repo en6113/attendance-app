@@ -15,10 +15,10 @@ class FormatAttendanceRecordsAction
     public function __invoke(User $user, CarbonImmutable $date): Collection
     {
         $recordsByDate = $user->attendanceRecords()
-            ->whereBetween('work_date', [$date->toDateString(), $date->endOfMonth()->toDateString()])
+            ->whereBetween('date', [$date->toDateString(), $date->endOfMonth()->toDateString()])
             ->with('breaks')
             ->get()
-            ->keyBy(fn (AttendanceRecord $record) => $record->work_date->format('Y-m-d'));
+            ->keyBy(fn (AttendanceRecord $record) => $record->date->format('Y-m-d'));
 
         return collect(range(1, $date->daysInMonth))
             ->map(fn (int $day) => $this->formatRow($date->day($day), $recordsByDate));

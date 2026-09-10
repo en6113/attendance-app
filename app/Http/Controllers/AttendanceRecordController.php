@@ -34,7 +34,7 @@ class AttendanceRecordController extends Controller
     {
         AttendanceRecord::create([
             'user_id' => auth()->id(),
-            'work_date' => today(),
+            'date' => today(),
             'clock_in_time' => now(),
         ]);
     }
@@ -66,7 +66,7 @@ class AttendanceRecordController extends Controller
         return auth()->user()
             ->attendanceRecords()
             ->whereNull('clock_out_time')
-            ->latest('work_date')
+            ->latest('date')
             ->firstOrFail();
     }
 }

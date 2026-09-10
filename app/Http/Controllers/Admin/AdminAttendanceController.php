@@ -36,7 +36,7 @@ class AdminAttendanceController extends Controller
             'previousDay' => $date->subDay()->toDateString(),
             'nextDay' => $date->addDay()->toDateString(),
             'users' => User::all(),
-            'attendanceRecords' => AttendanceRecord::whereDate('work_date', $date)->with('breaks')->get()->keyBy('user_id'),
+            'attendanceRecords' => AttendanceRecord::whereDate('date', $date)->with('breaks')->get()->keyBy('user_id'),
         ]);
     }
 
@@ -56,8 +56,8 @@ class AdminAttendanceController extends Controller
             'user' => $id->user,
             'attendanceRecord' => [
                 'id' => $id->id,
-                'year' => $id->work_date->format('Y').'年',
-                'date' => $id->work_date->isoFormat('M月D日'),
+                'year' => $id->date->format('Y').'年',
+                'date' => $id->date->isoFormat('M月D日'),
                 'clock_in' => $id->clock_in,
                 'clock_out' => $id->clock_out,
                 'breaks' => $id->breaks->map(fn (BreakTime $break): array => [
@@ -81,8 +81,8 @@ class AdminAttendanceController extends Controller
         }
 
         $id->update([
-            'clock_in_time' => $id->work_date->format('Y-m-d').' '.$request->new_clock_in,
-            'clock_out_time' => $id->work_date->format('Y-m-d').' '.$request->new_clock_out,
+            'clock_in_time' => $id->date->format('Y-m-d').' '.$request->new_clock_in,
+            'clock_out_time' => $id->date->format('Y-m-d').' '.$request->new_clock_out,
             'comment' => $request->comment,
         ]);
 
@@ -91,8 +91,8 @@ class AdminAttendanceController extends Controller
         collect($request->new_break_in ?? [])
             ->filter(fn (?string $breakIn, int $index): bool => filled($breakIn) && filled($request->new_break_out[$index] ?? null))
             ->each(fn (string $breakIn, int $index) => $id->breaks()->create([
-                'break_start_time' => $id->work_date->format('Y-m-d').' '.$breakIn,
-                'break_end_time' => $id->work_date->format('Y-m-d').' '.$request->new_break_out[$index],
+                'break_start_time' => $id->date->format('Y-m-d').' '.$breakIn,
+                'break_end_time' => $id->date->format('Y-m-d').' '.$request->new_break_out[$index],
             ]));
 
         return redirect('/admin/attendance/'.$id->id)->with('message', '修正しました');

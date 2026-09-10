@@ -58,7 +58,7 @@ class User extends Authenticatable
             get: function (): string {
                 $openRecord = $this->attendanceRecords()
                     ->whereNull('clock_out_time')
-                    ->latest('work_date')
+                    ->latest('date')
                     ->first();
 
                 if ($openRecord) {
@@ -68,7 +68,7 @@ class User extends Authenticatable
                 }
 
                 $hasTodayRecord = $this->attendanceRecords()
-                    ->whereDate('work_date', today())
+                    ->whereDate('date', today())
                     ->exists();
 
                 return $hasTodayRecord ? '退勤済' : '勤務外';

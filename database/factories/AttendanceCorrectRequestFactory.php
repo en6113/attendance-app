@@ -23,6 +23,7 @@ class AttendanceCorrectRequestFactory extends Factory
             'new_clock_out' => '18:00',
             'comment' => $this->faker->sentence(),
             'approved_at' => null,
+            'application_date' => today(),
         ];
     }
 }
