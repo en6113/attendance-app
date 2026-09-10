@@ -72,6 +72,11 @@
     width: 80px;
 }
 
+.applied-form__input--name {
+    text-align: left;
+    width: 100%;
+}
+
 .applied-form__textarea {
     border: none;
     outline: none;

@@ -53,4 +53,39 @@ class ApplicationControllerTest extends TestCase
 
         $response->assertDontSee('他人の申請理由');
     }
+
+    public function test_管理者の場合、承認待ちの修正申請が全て表示されている(): void
+    {
+        $admin = User::factory()->create(['admin_status' => true]);
+        $userA = User::factory()->create(['name' => '山田太郎']);
+        $userB = User::factory()->create(['name' => '鈴木花子']);
+        $recordA = AttendanceRecord::factory()->for($userA)->create();
+        $recordB = AttendanceRecord::factory()->for($userB)->create();
+        AttendanceCorrectRequest::factory()->for($recordA)->create(['comment' => '電車遅延のため']);
+        AttendanceCorrectRequest::factory()->for($recordB)->create(['comment' => '体調不良のため']);
+
+        $response = $this->actingAs($admin)->get('/stamp_correction_request/list');
+
+        $response->assertOk();
+        $response->assertSee('山田太郎');
+        $response->assertSee('鈴木花子');
+        $response->assertSee('電車遅延のため');
+        $response->assertSee('体調不良のため');
+    }
+
+    public function test_管理者の場合、承認済みの修正申請が全て表示されている(): void
+    {
+        $admin = User::factory()->create(['admin_status' => true]);
+        $user = User::factory()->create(['name' => '山田太郎']);
+        $record = AttendanceRecord::factory()->for($user)->create();
+        AttendanceCorrectRequest::factory()->for($record)->create([
+            'comment' => '承認済みの申請理由',
+            'approved_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->get('/stamp_correction_request/list');
+
+        $response->assertSee('承認済み');
+        $response->assertSee('承認済みの申請理由');
+    }
 }
