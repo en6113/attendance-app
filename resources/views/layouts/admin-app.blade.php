@@ -34,7 +34,12 @@
     </header>
     <main>
         @if (session('message'))
-            <p class="flash-message">{{ session('message') }}</p>
+            <p class="flash-message" id="flash-message">{{ session('message') }}</p>
+            <script>
+                setTimeout(() => {
+                    document.getElementById('flash-message')?.remove();
+                }, 3000);
+            </script>
         @endif
         @yield('content')
     </main>

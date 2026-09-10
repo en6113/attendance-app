@@ -17,6 +17,12 @@ class ApplicationController extends Controller
      */
     public function index(): View
     {
+        if (auth()->user()->admin_status) {
+            return view('admin.admin-application-list', [
+                'applications' => AttendanceCorrectRequest::with('attendanceRecord.user')->latest()->get(),
+            ]);
+        }
+
         $formattedApplications = AttendanceCorrectRequest::query()
             ->whereHas('attendanceRecord', fn ($query) => $query->where('user_id', auth()->id()))
             ->latest()
