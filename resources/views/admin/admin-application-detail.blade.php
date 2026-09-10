@@ -15,7 +15,7 @@
             <div class="applied-form__group">
                 <label class="applied-form__header">名前</label>
                 <div class="applied-form__input-group">
-                    <input class="applied-form__input" type="text" name="name" value="{{ $user->name }}" readonly>
+                    <input class="applied-form__input applied-form__input--name" type="text" name="name" value="{{ $user->name }}" readonly>
                 </div>
             </div>
             <div class="applied-form__group">

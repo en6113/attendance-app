@@ -44,7 +44,7 @@ class FormatAttendanceDetailAction
                 'break_in' => $break->break_start_time?->format('H:i') ?? '',
                 'break_out' => $break->break_end_time?->format('H:i') ?? '',
             ]),
-            'comment' => '',
+            'comment' => $attendanceRecord->comment ?? '',
         ];
     }
 

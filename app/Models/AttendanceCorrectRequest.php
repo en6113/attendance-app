@@ -21,6 +21,7 @@ class AttendanceCorrectRequest extends Model
         'new_clock_in',
         'new_clock_out',
         'comment',
+        'approved_at',
         'application_date',
     ];
 
@@ -48,6 +49,14 @@ class AttendanceCorrectRequest extends Model
     {
         return Attribute::make(
             get: fn (): string => $this->approved_at ? '承認済み' : '承認待ち',
+        );
+    }
+
+    // 修正申請 → 勤怠記録 → ユーザー、と2段階の関連をたどって取得するアクセサ
+    protected function user(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): User => $this->attendanceRecord->user,
         );
     }
 }
