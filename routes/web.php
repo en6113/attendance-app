@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAttendanceController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceRecordController;
@@ -35,6 +36,10 @@ Route::middleware('auth:web')->group(function () {
 Route::middleware('auth:web', 'admin')->group(function () {
     // 日次勤怠一覧
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
-    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.show');
     Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update']);
+
+    // スタッフ一覧
+    Route::get('/admin/staff/list', [StaffController::class, 'index'])->name('admin.staff.index');
+    Route::get('/admin/attendance/staff/{id}', [StaffController::class, 'show'])->name('admin.staff.show');
 });

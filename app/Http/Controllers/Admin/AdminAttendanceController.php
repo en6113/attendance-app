@@ -77,7 +77,7 @@ class AdminAttendanceController extends Controller
     public function update(StoreRequest $request, AttendanceRecord $id): RedirectResponse
     {
         if ($id->correctRequests()->whereNull('approved_at')->exists()) {
-            return redirect('/attendance/detail/' . $id->id);
+            return redirect('/attendance/detail/'.$id->id);
         }
 
         $id->update([
