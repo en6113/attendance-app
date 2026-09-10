@@ -14,7 +14,7 @@ class AttendanceRecordFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'work_date' => today(),
+            'date' => today(),
             'clock_in_time' => now(),
             'clock_out_time' => null,
         ];

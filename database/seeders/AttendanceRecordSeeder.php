@@ -95,7 +95,7 @@ class AttendanceRecordSeeder extends Seeder
     ): void {
         $record = AttendanceRecord::create([
             'user_id' => $user->id,
-            'work_date' => $date,
+            'date' => $date,
             'clock_in_time' => $date->setTimeFromTimeString($clockIn),
             'clock_out_time' => $date->setTimeFromTimeString($clockOut),
         ]);

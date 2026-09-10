@@ -36,8 +36,8 @@ class FormatAttendanceDetailAction
     private function formatAttendanceRecord(AttendanceRecord $attendanceRecord): array
     {
         return [
-            'year' => $attendanceRecord->work_date->format('Y').'年',
-            'date' => $attendanceRecord->work_date->isoFormat('M月D日'),
+            'year' => $attendanceRecord->date->format('Y').'年',
+            'date' => $attendanceRecord->date->isoFormat('M月D日'),
             'clock_in' => $attendanceRecord->clock_in_time?->format('H:i') ?? '',
             'clock_out' => $attendanceRecord->clock_out_time?->format('H:i') ?? '',
             'breaks' => $attendanceRecord->breaks->map(fn (BreakTime $break) => [

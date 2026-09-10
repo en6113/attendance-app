@@ -26,7 +26,7 @@ class ApplicationController extends Controller
                 'approval_status' => $request->approval_status,
                 'date' => $request->new_date->isoFormat('YYYY/MM/DD'),
                 'comment' => $request->comment,
-                'application_date' => $request->created_at->format('Y/m/d'),
+                'application_date' => $request->application_date->format('Y/m/d'),
             ]);
 
         return view('user.user-application-list', [

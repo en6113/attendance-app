@@ -17,7 +17,7 @@ class AttendanceRecord extends Model
      */
     protected $fillable = [
         'user_id',
-        'work_date',
+        'date',
         'clock_in_time',
         'clock_out_time',
         'comment',
@@ -27,7 +27,7 @@ class AttendanceRecord extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'work_date' => 'date',
+        'date' => 'date',
         'clock_in_time' => 'datetime',
         'clock_out_time' => 'datetime',
     ];
