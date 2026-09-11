@@ -8,6 +8,6 @@ class RegisterResponse implements RegisterResponseContract
 {
     public function toResponse($request)
     {
-        return redirect()->intended('/attendance');
+        return redirect()->route('verification.notice');
     }
 }

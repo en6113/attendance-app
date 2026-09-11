@@ -7,17 +7,21 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Responses\Auth\EmailVerificationNotificationSentResponse;
 use App\Http\Responses\Auth\LoginResponse;
 use App\Http\Responses\Auth\LogoutResponse;
 use App\Http\Responses\Auth\RegisterResponse;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
+use Laravel\Fortify\Contracts\EmailVerificationNotificationSentResponse as EmailVerificationNotificationSentResponseContract;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
@@ -35,6 +39,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
         $this->app->singleton(RegisterResponseContract::class, RegisterResponse::class);
         $this->app->singleton(LogoutResponseContract::class, LogoutResponse::class);
+        $this->app->singleton(EmailVerificationNotificationSentResponseContract::class, EmailVerificationNotificationSentResponse::class);
     }
 
     /**
@@ -77,6 +82,16 @@ class FortifyServiceProvider extends ServiceProvider
 
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        });
+
+        Fortify::verifyEmailView(fn () => view('auth.verify-email'));
+
+        VerifyEmail::toMailUsing(function ($notifiable, string $url): MailMessage {
+            return (new MailMessage)
+                ->subject('メールアドレスの確認')
+                ->line('以下のボタンを押して、メールアドレスの確認を完了してください。')
+                ->action('メールアドレスを確認する', $url)
+                ->line('このメールに心当たりがない場合は、何もする必要はありません。');
         });
     }
 }
