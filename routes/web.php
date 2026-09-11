@@ -16,7 +16,7 @@ Route::get('/', function () {
 // ============================================================
 // 一般ユーザー用ルート(勤怠登録・勤怠一覧・申請一覧)
 // ============================================================
-Route::middleware('auth:web')->group(function () {
+Route::middleware('auth:web', 'verified')->group(function () {
     // 勤怠登録
     Route::get('/attendance', [AttendanceRecordController::class, 'index'])->name('attendance-register');
     Route::post('/attendance', [AttendanceRecordController::class, 'store']);
