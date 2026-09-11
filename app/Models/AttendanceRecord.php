@@ -91,4 +91,15 @@ class AttendanceRecord extends Model
             : 0
         );
     }
+
+    public function workMinutes(): int
+    {
+        if (! $this->clock_in_time || ! $this->clock_out_time) {
+            return 0;
+        }
+
+        $workSeconds = $this->clock_in_time->diffInSeconds($this->clock_out_time) - $this->totalBreakSeconds();
+
+        return intdiv($workSeconds, 60);
+    }
 }

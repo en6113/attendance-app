@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceRecordController;
+use App\Http\Controllers\AttendanceReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,6 +30,9 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/stamp_correction_request/list', [ApplicationController::class, 'index'])->name('application.index');
     // 申請一覧の「詳細」リンクは勤怠詳細画面（AttendanceController::show）を再利用する
     Route::get('/application/{id}', [AttendanceController::class, 'show']);
+
+    // マイ勤怠統計レポート
+    Route::get('/attendance/report', [AttendanceReportController::class, 'index'])->name('attendance.report');
 });
 
 // ============================================================
