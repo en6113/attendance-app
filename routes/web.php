@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminApplicationController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
+use App\Http\Controllers\Admin\AttendanceExportController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
@@ -47,6 +48,7 @@ Route::middleware('auth:web', 'admin')->group(function () {
     // スタッフ一覧・詳細（月次勤怠一覧）
     Route::get('/admin/staff/list', [StaffController::class, 'index'])->name('admin.staff.index');
     Route::get('/admin/attendance/staff/{id}', [StaffController::class, 'show'])->name('admin.staff.show');
+    Route::post('/export', [AttendanceExportController::class, 'export'])->name('admin.attendance.export');
 
     // 申請一覧・詳細・承認
     // 申請一覧は一般ユーザー用ルートを共用し、ApplicationController::index() 内で admin_status により表示を分岐している
