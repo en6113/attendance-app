@@ -12,7 +12,7 @@ class AttendanceExportControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_管理者はスタッフの月次勤怠一覧を_cs_vでダウンロードできる(): void
+    public function test_管理者はスタッフの月次勤怠一覧をcsvでダウンロードできる(): void
     {
         $admin = User::factory()->create(['admin_status' => true]);
         $staff = User::factory()->create(['name' => '山田太郎']);
@@ -44,7 +44,7 @@ class AttendanceExportControllerTest extends TestCase
         $this->assertStringContainsString('8:00', $content);
     }
 
-    public function test_一般ユーザーは_cs_v出力にアクセスできない(): void
+    public function test_一般ユーザーはcsv出力にアクセスできない(): void
     {
         $user = User::factory()->create(['admin_status' => false]);
         $staff = User::factory()->create();
