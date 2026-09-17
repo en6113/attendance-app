@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\AttendanceCorrectRequest;
 use App\Models\AttendanceRecord;
 use App\Models\BreakTime;
 use App\Models\User;
@@ -159,6 +160,37 @@ class AdminAttendanceControllerTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['comment' => '備考を記入してください']);
+    }
+
+    public function test_直接修正時に上書き前の勤怠記録が修正申請として保存される(): void
+    {
+        $admin = User::factory()->create(['admin_status' => true]);
+        $record = AttendanceRecord::factory()->create([
+            'date' => '2026-09-05',
+            'clock_in_time' => '2026-09-05 09:00:00',
+            'clock_out_time' => '2026-09-05 18:00:00',
+            'comment' => '通常出勤',
+        ]);
+
+        $response = $this->actingAs($admin)->post('/admin/attendance/'.$record->id, [
+            'new_clock_in' => '09:30',
+            'new_clock_out' => '19:00',
+            'new_break_in' => [],
+            'new_break_out' => [],
+            'comment' => '電車遅延のため',
+        ]);
+
+        $response->assertRedirect('/admin/attendance/'.$record->id);
+        $this->assertDatabaseHas('attendance_correct_requests', [
+            'attendance_record_id' => $record->id,
+            'is_direct_edit' => true,
+            'old_clock_in' => '2026-09-05 09:00:00',
+            'old_clock_out' => '2026-09-05 18:00:00',
+            'old_comment' => '通常出勤',
+            'new_clock_in' => '09:30',
+            'new_clock_out' => '19:00',
+        ]);
+        $this->assertNotNull(AttendanceCorrectRequest::first()->approved_at);
     }
 
     public function test_一般ユーザーは管理者の勤怠一覧にアクセスできない(): void

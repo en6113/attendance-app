@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Attendance\ArchiveAttendanceRecordAction;
+use App\Actions\Attendance\BuildOldAttendanceSnapshotAction;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceCorrectRequest;
 use App\Models\ProposalBreak;
@@ -28,24 +28,27 @@ class AdminApplicationController extends Controller
     }
 
     /**
-     * 修正申請を承認する。上書きされる勤怠記録を履歴として保存したうえで、申請内容を反映する。
+     * 修正申請を承認する。
+     * 修正前情報をattendance_correct_requestに保存した上で、attendance_recordに申請内容を反映する。
      *
      * @return RedirectResponse 承認後の詳細画面へのリダイレクト
      */
-    public function update(AttendanceCorrectRequest $attendance_correct_request_id, ArchiveAttendanceRecordAction $archive): RedirectResponse
+    public function update(AttendanceCorrectRequest $attendance_correct_request_id, BuildOldAttendanceSnapshotAction $buildSnapshot): RedirectResponse
     {
-        $archive($attendance_correct_request_id->attendanceRecord, $attendance_correct_request_id);
+        $attendanceRecord = $attendance_correct_request_id->attendanceRecord;
 
-        $attendance_correct_request_id->attendanceRecord->update([
+        $attendance_correct_request_id->update($buildSnapshot($attendanceRecord));
+
+        $attendanceRecord->update([
             'date' => $attendance_correct_request_id->new_date,
             'clock_in_time' => $attendance_correct_request_id->new_date->format('Y-m-d').' '.$attendance_correct_request_id->new_clock_in,
             'clock_out_time' => $attendance_correct_request_id->new_date->format('Y-m-d').' '.$attendance_correct_request_id->new_clock_out,
             'comment' => $attendance_correct_request_id->comment,
         ]);
 
-        $attendance_correct_request_id->attendanceRecord->breaks()->delete();
+        $attendanceRecord->breaks()->delete();
 
-        $attendance_correct_request_id->proposalBreaks->each(fn (ProposalBreak $break) => $attendance_correct_request_id->attendanceRecord->breaks()->create([
+        $attendance_correct_request_id->proposalBreaks->each(fn (ProposalBreak $break) => $attendanceRecord->breaks()->create([
             'break_start_time' => $attendance_correct_request_id->new_date->format('Y-m-d').' '.$break->break_in,
             'break_end_time' => $break->break_out ? $attendance_correct_request_id->new_date->format('Y-m-d').' '.$break->break_out : null,
         ]));
