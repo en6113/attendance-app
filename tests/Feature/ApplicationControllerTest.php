@@ -54,6 +54,22 @@ class ApplicationControllerTest extends TestCase
         $response->assertDontSee('他人の申請理由');
     }
 
+    public function test_管理者による直接修正は申請一覧に表示されない(): void
+    {
+        $admin = User::factory()->create(['admin_status' => true]);
+        $user = User::factory()->create();
+        $record = AttendanceRecord::factory()->for($user)->create();
+        AttendanceCorrectRequest::factory()->for($record)->directEdit()->create([
+            'comment' => '管理者による直接修正の理由',
+        ]);
+
+        $userResponse = $this->actingAs($user)->get('/stamp_correction_request/list');
+        $userResponse->assertDontSee('管理者による直接修正の理由');
+
+        $adminResponse = $this->actingAs($admin)->get('/stamp_correction_request/list');
+        $adminResponse->assertDontSee('管理者による直接修正の理由');
+    }
+
     public function test_管理者の場合、承認待ちの修正申請が全て表示されている(): void
     {
         $admin = User::factory()->create(['admin_status' => true]);

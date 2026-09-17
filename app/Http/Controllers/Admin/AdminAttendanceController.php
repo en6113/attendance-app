@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Attendance\BuildOldAttendanceSnapshotAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Attendance\StoreRequest;
 use App\Models\AttendanceRecord;
@@ -70,15 +71,27 @@ class AdminAttendanceController extends Controller
     }
 
     /**
-     * 管理者が勤怠記録を直接修正する。承認フローを経由せず、AttendanceRecordを即座に更新する。
+     * 管理者が勤怠記録を直接修正する。
+     * attendance_correct_requestに直接修正として記録を残したうえで、
+     * 承認フローを経由せず、AttendanceRecordを即座に更新する。
      *
      * @return RedirectResponse 修正後の詳細画面へのリダイレクト
      */
-    public function update(StoreRequest $request, AttendanceRecord $id): RedirectResponse
+    public function update(StoreRequest $request, AttendanceRecord $id, BuildOldAttendanceSnapshotAction $buildSnapshot): RedirectResponse
     {
         if ($id->correctRequests()->whereNull('approved_at')->exists()) {
             return redirect('/attendance/detail/'.$id->id);
         }
+
+        $id->correctRequests()->create($buildSnapshot($id) + [
+            'is_direct_edit' => true,
+            'new_date' => $id->date,
+            'new_clock_in' => $request->new_clock_in,
+            'new_clock_out' => $request->new_clock_out,
+            'comment' => $request->comment,
+            'approved_at' => now(),
+            'application_date' => today(),
+        ]);
 
         $id->update([
             'clock_in_time' => $id->date->format('Y-m-d').' '.$request->new_clock_in,

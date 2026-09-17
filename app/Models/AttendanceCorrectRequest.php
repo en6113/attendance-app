@@ -17,6 +17,12 @@ class AttendanceCorrectRequest extends Model
      */
     protected $fillable = [
         'attendance_record_id',
+        'is_direct_edit',
+        'old_date',
+        'old_clock_in',
+        'old_clock_out',
+        'old_comment',
+        'old_breaks',
         'new_date',
         'new_clock_in',
         'new_clock_out',
@@ -29,6 +35,11 @@ class AttendanceCorrectRequest extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'is_direct_edit' => 'boolean',
+        'old_date' => 'date',
+        'old_clock_in' => 'datetime',
+        'old_clock_out' => 'datetime',
+        'old_breaks' => 'array',
         'new_date' => 'date',
         'approved_at' => 'datetime',
         'application_date' => 'date',

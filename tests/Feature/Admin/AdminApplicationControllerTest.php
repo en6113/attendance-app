@@ -78,7 +78,7 @@ class AdminApplicationControllerTest extends TestCase
         ]);
     }
 
-    public function test_承認時に上書き前の勤怠記録が履歴として保存される(): void
+    public function test_承認時に上書き前の勤怠記録が修正申請に保存される(): void
     {
         $admin = User::factory()->create(['admin_status' => true]);
         $user = User::factory()->create();
@@ -95,11 +95,10 @@ class AdminApplicationControllerTest extends TestCase
 
         $this->actingAs($admin)->post('/stamp_correction_request/approve/'.$correctRequest->id);
 
-        $this->assertDatabaseHas('attendance_record_histories', [
+        $this->assertDatabaseHas('attendance_correct_requests', [
             'attendance_record_id' => $record->id,
-            'attendance_correct_request_id' => $correctRequest->id,
-            'clock_in_time' => '2026-09-05 09:00:00',
-            'clock_out_time' => '2026-09-05 18:00:00',
+            'old_clock_in' => '2026-09-05 09:00:00',
+            'old_clock_out' => '2026-09-05 18:00:00',
         ]);
     }
 
