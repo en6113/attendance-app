@@ -34,7 +34,7 @@ class AttendanceRecordPolicyTest extends TestCase
         $admin = User::factory()->create(['admin_status' => true]);
         $record = AttendanceRecord::factory()->create();
 
-        $this->assertTrue($this->policy->view($admin, $record));
+        $this->assertTrue($admin->can('view', $record));
     }
 
     public function test_本人でも管理者でもない場合は勤怠記録を閲覧できない(): void
@@ -58,7 +58,7 @@ class AttendanceRecordPolicyTest extends TestCase
         $admin = User::factory()->create(['admin_status' => true]);
         $record = AttendanceRecord::factory()->create();
 
-        $this->assertTrue($this->policy->update($admin, $record));
+        $this->assertTrue($admin->can('update', $record));
     }
 
     public function test_本人でも管理者でもない場合は勤怠記録を修正できない(): void
