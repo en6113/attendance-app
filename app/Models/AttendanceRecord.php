@@ -32,21 +32,35 @@ class AttendanceRecord extends Model
         'clock_out_time' => 'datetime',
     ];
 
+    /**
+     * この勤怠記録の所有者(多対1)
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * この勤怠記録に紐づく休憩記録（1対多）
+     */
     public function breaks(): HasMany
     {
         return $this->hasMany(BreakTime::class);
     }
 
+    /**
+     * この勤怠記録に紐づく修正申請（1対多）
+     */
     public function correctRequests(): HasMany
     {
         return $this->hasMany(AttendanceCorrectRequest::class);
     }
 
+    /**
+     * 出勤時刻を「H:i」形式の文字列に整形したアクセサ。未出勤の場合は空文字を返す。
+     *
+     * @return Attribute 出勤時刻の文字列
+     */
     protected function clockIn(): Attribute
     {
         return Attribute::make(
@@ -54,6 +68,11 @@ class AttendanceRecord extends Model
         );
     }
 
+    /**
+     * 退勤時刻を「H:i」形式の文字列に整形したアクセサ。未退勤の場合は空文字を返す。
+     *
+     * @return Attribute 退勤時刻の文字列
+     */
     protected function clockOut(): Attribute
     {
         return Attribute::make(
@@ -61,6 +80,11 @@ class AttendanceRecord extends Model
         );
     }
 
+    /**
+     * 休憩時間の合計を「H:i:s」形式の文字列に整形したアクセサ。休憩がない場合は空文字を返す。
+     *
+     * @return Attribute 休憩時間合計の文字列
+     */
     protected function totalBreakTime(): Attribute
     {
         return Attribute::make(
@@ -68,6 +92,12 @@ class AttendanceRecord extends Model
         );
     }
 
+    /**
+     * 出勤〜退勤の実働時間（休憩時間を除く）を「H:i:s」形式の文字列に整形したアクセサ。
+     * 出勤・退勤のいずれかが未登録の場合は空文字を返す。
+     *
+     * @return Attribute 実働時間の文字列
+     */
     protected function totalTime(): Attribute
     {
         return Attribute::make(
@@ -83,6 +113,11 @@ class AttendanceRecord extends Model
         );
     }
 
+    /**
+     * 休憩時間の合計を秒数で算出する。開始・終了のいずれかが未登録の休憩は0秒として計算する。
+     *
+     * @return int 休憩時間の合計秒数
+     */
     private function totalBreakSeconds(): int
     {
         return $this->breaks->sum(
@@ -92,6 +127,12 @@ class AttendanceRecord extends Model
         );
     }
 
+    /**
+     * 出勤〜退勤の実働時間（休憩時間を除く）を分単位で算出する。
+     * 出勤・退勤のいずれかが未登録の場合は0を返す。
+     *
+     * @return int 実働時間（分）
+     */
     public function workMinutes(): int
     {
         if (! $this->clock_in_time || ! $this->clock_out_time) {

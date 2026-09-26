@@ -45,17 +45,27 @@ class AttendanceCorrectRequest extends Model
         'application_date' => 'date',
     ];
 
+    /**
+     * この修正申請の対象となる勤怠記録（多対1）
+     */
     public function attendanceRecord(): BelongsTo
     {
         return $this->belongsTo(AttendanceRecord::class);
     }
 
+    /**
+     * この修正申請に紐づく休憩の修正内容（1対多）。
+     */
     public function proposalBreaks(): HasMany
     {
         return $this->hasMany(ProposalBreak::class);
     }
 
-    // approved_atの有無で承認の可否を判断するアクセサ
+    /**
+     * approved_atの有無から承認状況を判定するアクセサ。
+     *
+     * @return Attribute 「承認済み」または「承認待ち」
+     */
     protected function approvalStatus(): Attribute
     {
         return Attribute::make(
@@ -63,7 +73,11 @@ class AttendanceCorrectRequest extends Model
         );
     }
 
-    // 修正申請 → 勤怠記録 → ユーザー、と2段階の関連をたどって取得するアクセサ
+    /**
+     * この修正申請を行ったユーザー。勤怠記録経由で2段階の関連をたどって取得する。
+     *
+     * @return Attribute 申請者のユーザー
+     */
     protected function user(): Attribute
     {
         return Attribute::make(

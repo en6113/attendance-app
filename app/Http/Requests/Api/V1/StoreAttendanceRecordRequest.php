@@ -5,14 +5,23 @@ namespace App\Http\Requests\Api\V1;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * 勤怠新規登録(公開API)のリクエストを検証するrequest。
+ */
 class StoreAttendanceRecordRequest extends FormRequest
 {
+    /**
+     * このリクエストの実行が許可されているかを判定する。
+     * 登録者はSanctumトークンの持ち主自身に限られ、所有権チェックが不要なため常にtrueを返す。
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     *  バリデーションルール。
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -30,6 +39,8 @@ class StoreAttendanceRecordRequest extends FormRequest
     }
 
     /**
+     * バリデーションエラー時のメッセージ。
+     *
      * @return array<string, string>
      */
     public function messages(): array
