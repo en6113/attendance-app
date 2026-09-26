@@ -15,12 +15,17 @@ class StoreRequest extends FormRequest
      */
     private const TIME_PATTERN = '/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/';
 
+    /**
+     * このリクエストの実行が許可されているかを判定する。修正対象の勤怠記録の所有者本人のみ許可する。
+     */
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->route('id'));
+        return $this->user()->can('update', $this->route('attendanceRecord'));
     }
 
     /**
+     * 修正申請のバリデーションルール。
+     *
      * @return array<string, mixed>
      */
     public function rules(): array

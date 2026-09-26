@@ -19,11 +19,11 @@ class AdminApplicationController extends Controller
      *
      * @return View 修正申請の詳細を含むビュー
      */
-    public function show(AttendanceCorrectRequest $attendance_correct_request_id): View
+    public function show(AttendanceCorrectRequest $attendanceCorrectRequest): View
     {
         return view('admin.admin-application-detail', [
-            'user' => $attendance_correct_request_id->user,
-            'application' => $attendance_correct_request_id->load('proposalBreaks'),
+            'user' => $attendanceCorrectRequest->user,
+            'application' => $attendanceCorrectRequest->load('proposalBreaks'),
         ]);
     }
 
@@ -33,27 +33,27 @@ class AdminApplicationController extends Controller
      *
      * @return RedirectResponse 承認後の詳細画面へのリダイレクト
      */
-    public function update(AttendanceCorrectRequest $attendance_correct_request_id, BuildOldAttendanceSnapshotAction $buildSnapshot): RedirectResponse
+    public function update(AttendanceCorrectRequest $attendanceCorrectRequest, BuildOldAttendanceSnapshotAction $buildSnapshot): RedirectResponse
     {
-        $attendanceRecord = $attendance_correct_request_id->attendanceRecord;
+        $attendanceRecord = $attendanceCorrectRequest->attendanceRecord;
 
-        $attendance_correct_request_id->update($buildSnapshot($attendanceRecord));
+        $attendanceCorrectRequest->update($buildSnapshot($attendanceRecord));
 
         $attendanceRecord->update([
-            'date' => $attendance_correct_request_id->new_date,
-            'clock_in_time' => $attendance_correct_request_id->new_date->format('Y-m-d').' '.$attendance_correct_request_id->new_clock_in,
-            'clock_out_time' => $attendance_correct_request_id->new_date->format('Y-m-d').' '.$attendance_correct_request_id->new_clock_out,
-            'comment' => $attendance_correct_request_id->comment,
+            'date' => $attendanceCorrectRequest->new_date,
+            'clock_in_time' => $attendanceCorrectRequest->new_date->format('Y-m-d').' '.$attendanceCorrectRequest->new_clock_in,
+            'clock_out_time' => $attendanceCorrectRequest->new_date->format('Y-m-d').' '.$attendanceCorrectRequest->new_clock_out,
+            'comment' => $attendanceCorrectRequest->comment,
         ]);
 
         $attendanceRecord->breaks()->delete();
 
-        $attendance_correct_request_id->proposalBreaks->each(fn (ProposalBreak $break) => $attendanceRecord->breaks()->create([
-            'break_start_time' => $attendance_correct_request_id->new_date->format('Y-m-d').' '.$break->break_in,
-            'break_end_time' => $break->break_out ? $attendance_correct_request_id->new_date->format('Y-m-d').' '.$break->break_out : null,
+        $attendanceCorrectRequest->proposalBreaks->each(fn (ProposalBreak $break) => $attendanceRecord->breaks()->create([
+            'break_start_time' => $attendanceCorrectRequest->new_date->format('Y-m-d').' '.$break->break_in,
+            'break_end_time' => $break->break_out ? $attendanceCorrectRequest->new_date->format('Y-m-d').' '.$break->break_out : null,
         ]));
 
-        $attendance_correct_request_id->update(['approved_at' => now()]);
+        $attendanceCorrectRequest->update(['approved_at' => now()]);
 
         return redirect()->route('application.index')->with('message', '承認しました');
     }

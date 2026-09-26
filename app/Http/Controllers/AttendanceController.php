@@ -19,6 +19,11 @@ use Illuminate\View\View;
  */
 class AttendanceController extends Controller
 {
+    /**
+     * 指定月（dateパラメータ、未指定時は当月）の勤怠一覧を表示する。
+     *
+     * @return View 当月/指定月の勤怠一覧を含むビュー
+     */
     public function index(FormatAttendanceRecordsAction $action): View
     {
         $date = request('date')
@@ -33,20 +38,30 @@ class AttendanceController extends Controller
         ]);
     }
 
-    public function show(AttendanceRecord $id, FormatAttendanceDetailAction $action): View
+    /**
+     * 勤怠詳細を表示する。承認待ちの修正申請がある場合は、その申請内容を表示する。
+     *
+     * @return View 勤怠詳細を含むビュー
+     */
+    public function show(AttendanceRecord $attendanceRecord, FormatAttendanceDetailAction $action): View
     {
-        $this->authorize('view', $id);
+        $this->authorize('view', $attendanceRecord);
 
         return view('user.user-detail', [
             'user' => auth()->user(),
-            'data' => $action($id),
+            'data' => $action($attendanceRecord),
         ]);
     }
 
-    public function store(StoreRequest $request, AttendanceRecord $id): RedirectResponse
+    /**
+     * 勤怠記録の修正申請を作成する。休憩の修正がある場合は、休憩ごとの修正申請も併せて作成する。
+     *
+     * @return RedirectResponse 申請後の勤怠詳細画面へのリダイレクト
+     */
+    public function store(StoreRequest $request, AttendanceRecord $attendanceRecord): RedirectResponse
     {
-        $correctRequest = $id->correctRequests()->create([
-            'new_date' => $id->date,
+        $correctRequest = $attendanceRecord->correctRequests()->create([
+            'new_date' => $attendanceRecord->date,
             'new_clock_in' => $request->new_clock_in,
             'new_clock_out' => $request->new_clock_out,
             'comment' => $request->comment,
@@ -60,6 +75,6 @@ class AttendanceController extends Controller
                 'break_out' => $request->new_break_out[$index],
             ]));
 
-        return redirect()->route('attendance.show', $id);
+        return redirect()->route('attendance.show', $attendanceRecord);
     }
 }

@@ -30,7 +30,7 @@ class StaffController extends Controller
      *
      * @return View スタッフの月次勤怠一覧を含むビュー
      */
-    public function show(User $id, FormatAttendanceRecordsAction $action): View
+    public function show(User $user, FormatAttendanceRecordsAction $action): View
     {
         $validated = request()->validate([
             'date' => ['nullable', 'date_format:Y-m'],
@@ -41,11 +41,11 @@ class StaffController extends Controller
             : today()->startOfMonth()->toImmutable();
 
         return view('admin.staff-attendance-list', [
-            'user' => $id,
+            'user' => $user,
             'date' => $date,
             'previousMonth' => $date->subMonth()->format('Y-m'),
             'nextMonth' => $date->addMonth()->format('Y-m'),
-            'formattedAttendanceRecords' => $action($id, $date),
+            'formattedAttendanceRecords' => $action($user, $date),
         ]);
     }
 }

@@ -11,12 +11,18 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class ActionRequest extends FormRequest
 {
+    /**
+     * このリクエストの実行が許可されているかを判定する。
+     * 打刻対象は常にログイン中のユーザー自身のため、常にtrueを返す（実際の妥当性はrules()のバリデーションで判定する）。
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     * 打刻アクションのバリデーションルール。
+     *
      * @return array<string, mixed>
      */
     public function rules(): array

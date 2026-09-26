@@ -46,12 +46,19 @@ class User extends Authenticatable implements MustVerifyEmail
         'admin_status' => 'boolean',
     ];
 
+    /**
+     * このユーザーの勤怠記録（1対多）
+     */
     public function attendanceRecords(): HasMany
     {
         return $this->hasMany(AttendanceRecord::class);
     }
 
-    // 出退勤時刻または休憩時刻の有無によって勤務状態のステータスを判断するアクセサ
+    /**
+     * 出退勤・休憩の記録状況から現在の勤務状態を判定するアクセサ。
+     *
+     * @return Attribute 「勤務外」「出勤中」「休憩中」「退勤済」のいずれか
+     */
     protected function attendanceStatus(): Attribute
     {
         return Attribute::make(

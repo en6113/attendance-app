@@ -13,10 +13,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
+/**
+ * 外部アプリケーションが勤怠データを取得・操作するための公開API用の Controller。
+ */
 class AttendanceRecordController extends Controller
 {
     /**
-     * 勤怠一覧を取得する。
+     * 勤怠一覧をJSONで取得する。
      *
      * @return AnonymousResourceCollection 勤怠一覧のページネーション付きレスポンス
      */
@@ -38,7 +41,7 @@ class AttendanceRecordController extends Controller
     }
 
     /**
-     * 勤怠詳細を取得する。
+     * 勤怠詳細をJSONで取得する。
      *
      * @return AttendanceRecordResource 勤怠詳細のレスポンス
      */

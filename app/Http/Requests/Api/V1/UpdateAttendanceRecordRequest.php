@@ -5,14 +5,23 @@ namespace App\Http\Requests\Api\V1;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * 勤怠更新(公開API)のリクエストを検証するrequest。
+ */
 class UpdateAttendanceRecordRequest extends FormRequest
 {
+    /**
+     * このリクエストの実行が許可されているかを判定する。
+     * 所有者チェックはコントローラー側の$this->authorize('update', $attendanceRecord)で行うため、常にtrueを返す。
+     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
+     * バリデーションルール。
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -33,6 +42,8 @@ class UpdateAttendanceRecordRequest extends FormRequest
     }
 
     /**
+     * バリデーションエラー時のメッセージ。
+     *
      * @return array<string, string>
      */
     public function messages(): array

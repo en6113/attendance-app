@@ -19,6 +19,9 @@ class ProposalBreak extends Model
         'break_out',
     ];
 
+    /**
+     * この休憩修正内容が属する修正申請（多対1）
+     */
     public function attendanceCorrectRequest(): BelongsTo
     {
         return $this->belongsTo(AttendanceCorrectRequest::class);
