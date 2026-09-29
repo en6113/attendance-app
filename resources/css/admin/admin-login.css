@@ -7,7 +7,7 @@
 
 .header {
     background: #000;
-    max-width: 1540px;
+    width: 100%;
 }
 
 .header__inner {
