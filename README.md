@@ -26,7 +26,7 @@
      cp .env.example .env
      ```
 
-     `.env` ファイルを開き、DB接続情報等を以下の値に変更してください。
+     `.env` ファイルを開き、DB接続情報等を以下の値に変更・確認してください。
 
      ```bash
      DB_CONNECTION=mysql
