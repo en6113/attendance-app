@@ -293,4 +293,55 @@ class AttendanceControllerTest extends TestCase
         $response->assertSessionHasErrors(['new_clock_out' => '出勤時間もしくは退勤時間が不適切な値です']);
         $this->assertDatabaseCount('attendance_correct_requests', 0);
     }
+
+    public function test_休憩開始時間が退勤時間より後になっている場合エラーメッセージが表示される(): void
+    {
+        $user = User::factory()->create();
+        $record = AttendanceRecord::factory()->for($user)->create();
+
+        $response = $this->actingAs($user)->post('/attendance/detail/'.$record->id, [
+            'new_clock_in' => '09:00',
+            'new_clock_out' => '18:00',
+            'new_break_in' => ['19:00'],
+            'new_break_out' => ['19:30'],
+            'comment' => '備考',
+        ]);
+
+        $response->assertSessionHasErrors(['new_break_in.0' => '休憩時間が不適切な値です']);
+        $this->assertDatabaseCount('attendance_correct_requests', 0);
+    }
+
+    public function test_休憩終了時間が退勤時間より後になっている場合エラーメッセージが表示される(): void
+    {
+        $user = User::factory()->create();
+        $record = AttendanceRecord::factory()->for($user)->create();
+
+        $response = $this->actingAs($user)->post('/attendance/detail/'.$record->id, [
+            'new_clock_in' => '09:00',
+            'new_clock_out' => '18:00',
+            'new_break_in' => ['17:00'],
+            'new_break_out' => ['19:00'],
+            'comment' => '備考',
+        ]);
+
+        $response->assertSessionHasErrors(['new_break_out.0' => '休憩時間もしくは退勤時間が不適切な値です']);
+        $this->assertDatabaseCount('attendance_correct_requests', 0);
+    }
+
+    public function test_備考欄が未入力の場合エラーメッセージが表示される(): void
+    {
+        $user = User::factory()->create();
+        $record = AttendanceRecord::factory()->for($user)->create();
+
+        $response = $this->actingAs($user)->post('/attendance/detail/'.$record->id, [
+            'new_clock_in' => '09:00',
+            'new_clock_out' => '18:00',
+            'new_break_in' => [],
+            'new_break_out' => [],
+            'comment' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['comment' => '備考を記入してください']);
+        $this->assertDatabaseCount('attendance_correct_requests', 0);
+    }
 }
