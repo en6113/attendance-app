@@ -54,6 +54,17 @@ class ApplicationControllerTest extends TestCase
         $response->assertDontSee('他人の申請理由');
     }
 
+    public function test_申請の詳細を押下すると勤怠詳細画面に遷移する(): void
+    {
+        $user = User::factory()->create();
+        $record = AttendanceRecord::factory()->for($user)->create();
+        AttendanceCorrectRequest::factory()->for($record)->create(['comment' => '電車遅延のため']);
+
+        $response = $this->actingAs($user)->get('/stamp_correction_request/list');
+
+        $response->assertSee('/application/'.$record->id);
+    }
+
     public function test_管理者による直接修正は申請一覧に表示されない(): void
     {
         $admin = User::factory()->create(['admin_status' => true]);
