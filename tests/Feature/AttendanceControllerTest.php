@@ -39,6 +39,20 @@ class AttendanceControllerTest extends TestCase
         $response->assertSee('2026/09');
     }
 
+    public function test_勤怠一覧画面で現在の月を表示している時、本日より後の日には詳細ボタンが表示されない(): void
+    {
+        $this->travelTo('2026-09-05');
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/attendance/list?date=2026-09');
+
+        $response->assertOk();
+        $this->assertDatabaseMissing('attendance_records', [
+            'user_id' => $user->id,
+            'date' => '2026-09-15',
+        ]);
+    }
+
     public function test_「前月」を押下した時に表示月の前月の情報が表示される(): void
     {
         $user = User::factory()->create();
@@ -52,6 +66,22 @@ class AttendanceControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get('/attendance/list?date=2026-08');
         $response->assertSee('09:00');
+    }
+
+    public function test_過去月の表示で勤怠情報がない日にも詳細ボタンが表示される(): void
+    {
+        $this->travelTo('2026-09-05');
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/attendance/list?date=2026-08');
+
+        $record = AttendanceRecord::where('user_id', $user->id)
+            ->whereDate('date', '2026-08-05')
+            ->first();
+
+        $response->assertOk();
+        $this->assertNotNull($record);
+        $response->assertSee('/attendance/detail/'.$record->id);
     }
 
     public function test_「翌月」を押下した時に表示月の翌月の情報が表示される(): void
@@ -76,6 +106,23 @@ class AttendanceControllerTest extends TestCase
         $response = $this->actingAs($user)->get('/attendance/list?date=2026-09');
 
         $response->assertSee('/attendance/detail/'.$record->id);
+    }
+
+    public function test_未打刻日の「詳細」を押下すると、出勤退勤欄が空のまま正常に表示される(): void
+    {
+        $this->travelTo('2026-09-05');
+        $user = User::factory()->create(['name' => '山田太郎']);
+
+        $this->actingAs($user)->get('/attendance/list?date=2026-09');
+        $record = AttendanceRecord::where('user_id', $user->id)
+            ->whereDate('date', '2026-09-01')
+            ->first();
+
+        $response = $this->actingAs($user)->get('/attendance/detail/'.$record->id);
+
+        $response->assertOk();
+        $response->assertSee('山田太郎');
+        $response->assertSee('9月1日');
     }
 
     public function test_本人は自分の勤怠詳細画面を閲覧でき、名前・日付・出退勤時刻・休憩時刻が一致している(): void
@@ -148,6 +195,31 @@ class AttendanceControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $record = AttendanceRecord::factory()->for($user)->create();
+
+        $response = $this->actingAs($user)->post('/attendance/detail/'.$record->id, [
+            'new_clock_in' => '09:00',
+            'new_clock_out' => '18:00',
+            'new_break_in' => ['12:00'],
+            'new_break_out' => ['13:00'],
+            'comment' => '電車遅延のため',
+        ]);
+
+        $response->assertRedirect('/attendance/detail/'.$record->id);
+        $this->assertDatabaseHas('attendance_correct_requests', [
+            'attendance_record_id' => $record->id,
+            'new_clock_in' => '09:00',
+            'new_clock_out' => '18:00',
+            'comment' => '電車遅延のため',
+        ]);
+    }
+
+    public function test_未打刻日のレコードにも修正申請を送信できる(): void
+    {
+        $user = User::factory()->create();
+        $record = AttendanceRecord::factory()->for($user)->create([
+            'clock_in_time' => null,
+            'clock_out_time' => null,
+        ]);
 
         $response = $this->actingAs($user)->post('/attendance/detail/'.$record->id, [
             'new_clock_in' => '09:00',

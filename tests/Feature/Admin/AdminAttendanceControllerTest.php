@@ -193,6 +193,33 @@ class AdminAttendanceControllerTest extends TestCase
         $this->assertNotNull(AttendanceCorrectRequest::first()->approved_at);
     }
 
+    public function test_未打刻日のレコードを直接修正すると出退勤時刻が反映される(): void
+    {
+        $this->travelTo('2026-09-05');
+        $admin = User::factory()->create(['admin_status' => true]);
+        $staff = User::factory()->create();
+
+        $this->actingAs($admin)->get('/admin/attendance/staff/'.$staff->id.'?date=2026-09');
+        $record = AttendanceRecord::where('user_id', $staff->id)
+            ->whereDate('date', '2026-09-01')
+            ->first();
+
+        $response = $this->actingAs($admin)->post('/admin/attendance/'.$record->id, [
+            'new_clock_in' => '09:00',
+            'new_clock_out' => '18:00',
+            'new_break_in' => [],
+            'new_break_out' => [],
+            'comment' => '修正',
+        ]);
+
+        $response->assertRedirect('/admin/attendance/'.$record->id);
+        $this->assertDatabaseHas('attendance_records', [
+            'id' => $record->id,
+            'clock_in_time' => '2026-09-01 09:00:00',
+            'clock_out_time' => '2026-09-01 18:00:00',
+        ]);
+    }
+
     public function test_一般ユーザーは管理者の勤怠一覧にアクセスできない(): void
     {
         $user = User::factory()->create(['admin_status' => false]);

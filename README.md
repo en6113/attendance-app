@@ -187,7 +187,7 @@
           bigint id PK
           bigint user_id FK
           date date UK "user_idとの複合ユニーク"
-          datetime clock_in_time
+          datetime clock_in_time "nullable"
           datetime clock_out_time "nullable"
           string comment "nullable"
           timestamps timestamps
@@ -196,7 +196,7 @@
       breaks {
           bigint id PK
           bigint attendance_record_id FK
-          datetime break_start_time
+          datetime break_start_time "nullable"
           datetime break_end_time "nullable"
           timestamps timestamps
       }

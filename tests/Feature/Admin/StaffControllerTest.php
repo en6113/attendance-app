@@ -106,6 +106,56 @@ class StaffControllerTest extends TestCase
         $response->assertSee('/admin/attendance/'.$record->id);
     }
 
+    public function test_過去月の表示で勤怠情報がない日にも詳細ボタンが表示される(): void
+    {
+        $this->travelTo('2026-09-05');
+        $admin = User::factory()->create(['admin_status' => true]);
+        $staff = User::factory()->create();
+
+        $response = $this->actingAs($admin)->get('/admin/attendance/staff/'.$staff->id.'?date=2026-08');
+
+        $record = AttendanceRecord::where('user_id', $staff->id)
+            ->whereDate('date', '2026-08-05')
+            ->first();
+
+        $response->assertOk();
+        $this->assertNotNull($record);
+        $response->assertSee('/admin/attendance/'.$record->id);
+    }
+
+    public function test_当月の表示で本日より後の日には詳細ボタンが表示されない(): void
+    {
+        $this->travelTo('2026-09-10');
+        $admin = User::factory()->create(['admin_status' => true]);
+        $staff = User::factory()->create();
+
+        $response = $this->actingAs($admin)->get('/admin/attendance/staff/'.$staff->id.'?date=2026-09');
+
+        $response->assertOk();
+        $this->assertDatabaseMissing('attendance_records', [
+            'user_id' => $staff->id,
+            'date' => '2026-09-15',
+        ]);
+    }
+
+    public function test_未打刻日の詳細を管理者が開いても出勤退勤欄が空のまま正常に表示される(): void
+    {
+        $this->travelTo('2026-09-05');
+        $admin = User::factory()->create(['admin_status' => true]);
+        $staff = User::factory()->create(['name' => '山田太郎']);
+
+        $this->actingAs($admin)->get('/admin/attendance/staff/'.$staff->id.'?date=2026-09');
+        $record = AttendanceRecord::where('user_id', $staff->id)
+            ->whereDate('date', '2026-09-01')
+            ->first();
+
+        $response = $this->actingAs($admin)->get('/admin/attendance/'.$record->id);
+
+        $response->assertOk();
+        $response->assertSee('山田太郎');
+        $response->assertSee('9月1日');
+    }
+
     public function test_一般ユーザーはスタッフ一覧にアクセスできない(): void
     {
         $user = User::factory()->create(['admin_status' => false]);
